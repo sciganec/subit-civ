@@ -1,0 +1,10 @@
+site_id,type,value,year_from,year_to,method
+1,population,2.0,-3100,-2900,Shady2006_early
+1,population,8.0,-2700,-2500,Haas2006
+1,population,19.0,-2500,-2100,Haas2006_peak
+1,population,18.5,-2100,-1900,Haas2013
+1,population,8.0,-1900,-1700,Shady2013_decline
+1,population,3.0,-1700,-1500,Shady2013_final
+2,population,1.0,-3100,-2900,Feldman1980_early
+2,population,4.0,-2500,-2100,Feldman1980_peak
+2,population,0.5,-1900,-1700,Feldman1980_decline

@@ -1,0 +1,34 @@
+simulation:
+  steps: 76
+  step_duration_years: 25
+  initial_state:
+    P: 2.0
+    M: 0.0
+    E: 0.0
+    rule: 1
+rules:
+  spring:
+    r: 0.15
+    K: 25.0
+    M_growth: 0.4
+    M_decay: 0.05
+  summer:
+    r: 0.05
+    cost_M: 0.015
+    M_growth: 0.3
+    M_decay: 0.08
+    E_inflow: 0.1
+    E_decay: 0.1
+  autumn:
+    base_decay_P: 0.03
+    stress_impact_P: 0.02
+    M_decay: 0.15
+    E_inflow: 0.05
+    E_stress_loss: 2.0
+  winter:
+    collapse_rate: 0.12
+transitions:
+  spring_to_summer_P: 8.0
+  summer_to_autumn_M: 15.0
+  autumn_to_winter_E: 0.5
+climate_stress_steps: [60, 62, 64, 66]
