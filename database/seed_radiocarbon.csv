@@ -1,0 +1,3 @@
+site_id,source_id,type,value,year_from,year_to,method
+1,6,earliest_radiocarbon_date,-2627,-2700,-2550,Shady2001_Caral
+2,6,earliest_radiocarbon_date,-2550,-2700,-2400,Shady2001_Aspero

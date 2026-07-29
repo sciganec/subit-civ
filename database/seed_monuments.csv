@@ -1,0 +1,5 @@
+site_id,source_id,type,value,year_from,year_to,method
+1,1,monument_volume,5.0,-2900,-2600,Shady1997_early
+1,2,monument_volume,14.8,-2500,-2100,Haas2006_peak
+1,4,monument_volume,13.0,-2100,-1900,Shady2025_late
+2,2,monument_volume,3.0,-2500,-2100,Feldman1980_peak

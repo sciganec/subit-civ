@@ -1,0 +1,1 @@
+echo. > database\__init__.py

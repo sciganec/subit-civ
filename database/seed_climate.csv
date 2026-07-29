@@ -1,0 +1,7 @@
+site_id,source_id,proxy_type,year,value
+1,3,flood_frequency,-2200,1.5
+1,3,flood_frequency,-2000,3.2
+1,3,flood_frequency,-1800,2.8
+1,4,drought_severity,-2200,0.2
+1,4,drought_severity,-2000,0.8
+1,4,drought_severity,-1800,1.1

@@ -1,47 +1,50 @@
 #!/usr/bin/env python3
 """
-Build the minimal Caral‑Supe fact database (SQLite).
+Build the Caral‑Supe fact database (SQLite) from seed CSV files.
 
 Run from the project root:
     python database/build_db.py
-
-This will create ``caral_facts.sqlite`` in the current directory.
+Creates ``caral_facts.sqlite``.
 """
 
-import sqlite3
-import csv
-import os
-import sys
+import sqlite3, csv, os, sys
 
 DB_PATH = "caral_facts.sqlite"
 SCHEMA_FILE = os.path.join("database", "schema.sql")
-SEED_SITES = os.path.join("database", "seed_sites.csv")
-SEED_POP = os.path.join("database", "seed_population.csv")
+
+# Table → (csv_path, [columns])
+SEED_FILES = {
+    "sites": ("database/seed_sites.csv", ["site_id", "name", "latitude", "longitude"]),
+    "sources": ("database/seed_sources.csv", ["source_id", "author", "year", "title", "doi"]),
+    "observations": [
+        ("database/seed_population.csv", ["site_id", "source_id", "type", "value", "year_from", "year_to", "method"]),
+        ("database/seed_monuments.csv", ["site_id", "source_id", "type", "value", "year_from", "year_to", "method"]),
+        ("database/seed_trade.csv", ["site_id", "source_id", "type", "value", "year_from", "year_to", "method"]),
+        ("database/seed_isotopes.csv", ["site_id", "source_id", "type", "value", "year_from", "year_to", "method"]),
+        ("database/seed_abandonment.csv", ["site_id", "source_id", "type", "value", "year_from", "year_to", "method"]),
+        ("database/seed_radiocarbon.csv", ["site_id", "source_id", "type", "value", "year_from", "year_to", "method"]),
+    ],
+    "climate_proxies": ("database/seed_climate.csv", ["site_id", "source_id", "proxy_type", "year", "value"]),
+}
 
 def execute_schema(conn):
-    """Read and execute the SQL schema file."""
     with open(SCHEMA_FILE, 'r', encoding='utf-8') as f:
-        sql = f.read()
-    conn.executescript(sql)
+        conn.executescript(f.read())
     print("Schema applied.")
 
 def import_csv(conn, table_name, csv_path, columns):
-    """Import a CSV file into the given table."""
+    if not os.path.exists(csv_path):
+        print(f"Warning: {csv_path} not found, skipping.")
+        return
     with open(csv_path, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
-        rows = []
-        for row in reader:
-            # Build a tuple of values in the same order as columns
-            values = tuple(row[col] for col in columns)
-            rows.append(values)
+        rows = [tuple(row[col] for col in columns) for row in reader]
     placeholders = ", ".join(["?"] * len(columns))
     cols = ", ".join(columns)
-    sql = f"INSERT INTO {table_name} ({cols}) VALUES ({placeholders})"
-    conn.executemany(sql, rows)
-    print(f"Imported {len(rows)} rows into {table_name}.")
+    conn.executemany(f"INSERT INTO {table_name} ({cols}) VALUES ({placeholders})", rows)
+    print(f"Imported {len(rows)} rows into {table_name} from {csv_path}")
 
 def seed_rules(conn):
-    """Insert the four civilization rules."""
     rules = [
         (1, "irrigation_growth", "Irrigation-driven population growth (SPRING)"),
         (2, "monumental_cooperation", "Monumental cooperation and trade (SUMMER)"),
@@ -49,24 +52,28 @@ def seed_rules(conn):
         (4, "collapse", "System collapse and dispersal (WINTER)")
     ]
     conn.executemany(
-        "INSERT INTO rules (rule_id, name, description) VALUES (?, ?, ?)",
-        rules
+        "INSERT OR IGNORE INTO rules (rule_id, name, description) VALUES (?, ?, ?)", rules
     )
-    print(f"Inserted {len(rules)} rules.")
+    print(f"Inserted {len(rules)} basic rules.")
 
 def main():
-    # Remove existing database to start fresh
     if os.path.exists(DB_PATH):
         os.remove(DB_PATH)
         print(f"Removed existing {DB_PATH}")
 
     conn = sqlite3.connect(DB_PATH)
     conn.execute("PRAGMA foreign_keys = ON")
-
     try:
         execute_schema(conn)
-        import_csv(conn, "sites", SEED_SITES, ["site_id", "name", "latitude", "longitude"])
-        import_csv(conn, "observations", SEED_POP, ["site_id", "type", "value", "year_from", "year_to", "method"])
+        # Import base tables
+        import_csv(conn, "sites", *SEED_FILES["sites"])
+        import_csv(conn, "sources", *SEED_FILES["sources"])
+        # Import observations from multiple files
+        for csv_path, cols in SEED_FILES["observations"]:
+            import_csv(conn, "observations", csv_path, cols)
+        # Import climate proxies
+        import_csv(conn, "climate_proxies", *SEED_FILES["climate_proxies"])
+        # Insert basic rules
         seed_rules(conn)
         conn.commit()
         print(f"Database {DB_PATH} created successfully.")

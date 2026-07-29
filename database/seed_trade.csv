@@ -1,0 +1,5 @@
+site_id,source_id,type,value,year_from,year_to,method
+1,2,trade_index,2.5,-2500,-2100,Haas2006_obsidian
+1,3,trade_index,1.2,-2100,-1900,Sandweiss2009_decline
+1,4,trade_index,0.3,-1900,-1700,Shady2025_collapse
+2,2,trade_index,1.8,-2500,-2100,Feldman1980_shells

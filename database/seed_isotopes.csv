@@ -1,0 +1,5 @@
+site_id,source_id,type,value,year_from,year_to,method
+1,5,marine_protein_%,25.0,-2700,-2000,Pezo-Lanfranco2022
+2,5,marine_protein_%,45.0,-2700,-2000,Pezo-Lanfranco2022
+1,5,δ13C_collagen,-13.6,-2700,-1800,Pezo-Lanfranco2022
+2,5,δ13C_collagen,-12.1,-2700,-1800,Pezo-Lanfranco2022

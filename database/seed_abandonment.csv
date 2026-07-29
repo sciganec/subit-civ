@@ -1,0 +1,6 @@
+site_id,source_id,type,value,year_from,year_to,method
+1,4,abandonment_year,-1850,-1800,Shady2025_Caral
+2,3,abandonment_year,-1900,-1850,Sandweiss2009_Aspero
+3,4,founding_year,-1750,-1700,Shady2025_Vichama
+5,6,abandonment_year,-2000,-2100,-1900,Haas2004_Huaricanga
+6,3,abandonment_year,-1900,-2000,-1800,Sandweiss2009_Bandurria
