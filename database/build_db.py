@@ -23,6 +23,7 @@ SEED_FILES = {
         ("database/seed_isotopes.csv", ["site_id", "source_id", "type", "value", "year_from", "year_to", "method"]),
         ("database/seed_abandonment.csv", ["site_id", "source_id", "type", "value", "year_from", "year_to", "method"]),
         ("database/seed_radiocarbon.csv", ["site_id", "source_id", "type", "value", "year_from", "year_to", "method"]),
+        ("database/seed_cultural_continuity.csv", ["site_id", "source_id", "type", "value", "year_from", "year_to", "method"]),
     ],
     "climate_proxies": ("database/seed_climate.csv", ["site_id", "source_id", "proxy_type", "year", "value"]),
 }
