@@ -31,10 +31,28 @@ def apply_rule(P, M, E, rule, stress, params):
         P_next = P * (1 - decay_P)
         M_next = M * (1 - r['autumn']['M_decay'])
         E_next = max(0.0, E + r['autumn']['E_inflow'] * (P / 20.0) - r['autumn']['E_stress_loss'] * stress)
-    else:                  # WINTER – collapse
+    elif rule == 4:        # WINTER – collapse
         P_next = P * (1 - r['winter']['collapse_rate'])
         M_next = 0.0
         E_next = 0.0
+    elif rule == 6:        # AGRICULTURAL PRIMACY (формування)
+        # Аналогічно до spring, але з більшим r
+        P_next = P * (1 + r['agricultural_primacy']['r'] * (1 - P / r['agricultural_primacy']['K']))
+        M_next = M * (1 - r['agricultural_primacy']['M_decay']) + r['agricultural_primacy']['M_growth'] * P
+        E_next = 0.0
+    elif rule == 10:       # MEGADROUGHT MIGRATION (занепад)
+        # Повільніше зниження, після досягнення частки стабілізується
+        decline_rate = r['megadrought_migration']['decline_rate']
+        stable_frac = r['megadrought_migration']['stable_fraction']
+        peak_population = params.get('peak_population', P)  # можна зберегти пік
+        P_next = P * (1 - decline_rate)
+        # Якщо впали нижче стабільної частки від піку, зупиняємо падіння
+        if P_next < peak_population * stable_frac:
+            P_next = peak_population * stable_frac
+        M_next = M * 0.95   # повільне руйнування монументів
+        E_next = max(0.0, E - 0.05)
+    else:
+        raise ValueError(f"Unknown rule: {rule}")
     return P_next, M_next, E_next
 
 
@@ -45,6 +63,12 @@ def meta_evolution(rule, P, M, E, step, stress, params):
     Returns the new rule (may be the same as the input).
     """
     t = params['transitions']
+    # Якщо правило 6 (agri primacy), воно просто переходить у SUMMER при досягненні популяції
+    if rule == 6 and P >= t['spring_to_summer_P']:
+        return 2
+    # Якщо правило 10 (migration), воно не змінюється, ми хочемо лишити його
+    if rule == 10:
+        return 10
     # SPRING → SUMMER when population threshold is reached
     if rule == 1 and P >= t['spring_to_summer_P']:
         return 2
